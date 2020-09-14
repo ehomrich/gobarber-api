@@ -3,6 +3,7 @@ import path from 'path';
 import { getRepository } from 'typeorm';
 
 import uploadConfig from '../config/upload';
+import AppError from '../errors/AppError';
 import User from '../models/User';
 
 interface RequestBody {
@@ -23,7 +24,10 @@ export default class UpdateUserAvatarService {
     });
 
     if (!user) {
-      throw new Error('User not found.');
+      throw new AppError(
+        'Only authenticated users are allowed to change avatar.',
+        401,
+      );
     }
 
     if (user.avatar) {
