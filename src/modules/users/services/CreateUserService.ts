@@ -1,16 +1,17 @@
-import { getRepository } from 'typeorm';
 import { hash } from 'bcryptjs';
 
-import AppError from '../errors/AppError';
-import User from '../models/User';
+import AppError from '@shared/errors/AppError';
 
-interface RequestBody {
+import User from '@modules/users/infra/typeorm/entities/User';
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+
+interface IRequestBody {
   name: string;
   email: string;
   password: string;
 }
 
-interface CreatedUser {
+interface ICreatedUser {
   id: string;
   name: string;
   email: string;
@@ -19,8 +20,10 @@ interface CreatedUser {
 }
 
 export default class CreateUserService {
+  constructor(private usersRepository: IUsersRepository) {}
+
   // eslint-disable-next-line class-methods-use-this
-  private omitPassword(user: User): CreatedUser {
+  private omitPassword(user: User): ICreatedUser {
     const { id, name, email, created_at, updated_at } = user;
 
     return { id, name, email, created_at, updated_at };
@@ -30,22 +33,19 @@ export default class CreateUserService {
     name,
     email,
     password,
-  }: RequestBody): Promise<CreatedUser> {
-    const usersRepository = getRepository(User);
-
-    const userExists = await usersRepository.findOne({ where: { email } });
+  }: IRequestBody): Promise<ICreatedUser> {
+    const userExists = await this.usersRepository.findByEmail(email);
 
     if (userExists) {
       throw new AppError('Email address already in use.');
     }
 
     const hashedPassword = await hash(password, 8);
-    const user = usersRepository.create({
+    const user = await this.usersRepository.create({
       name,
       email,
       password: hashedPassword,
     });
-    await usersRepository.save(user);
 
     return this.omitPassword(user);
   }

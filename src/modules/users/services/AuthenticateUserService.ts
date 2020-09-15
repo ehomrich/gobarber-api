@@ -1,30 +1,30 @@
-import { getRepository } from 'typeorm';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 
-import authConfig from '../config/auth';
-import AppError from '../errors/AppError';
-import User from '../models/User';
+import authConfig from '@config/auth';
+import AppError from '@shared/errors/AppError';
 
-interface RequestBody {
+import User from '@modules/users/infra/typeorm/entities/User';
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+
+interface IRequestBody {
   email: string;
   password: string;
 }
 
-interface AuthenticationResponse {
+interface IAuthenticationResponse {
   user: User;
   token: string;
 }
 
 export default class AuthenticateUserService {
-  // eslint-disable-next-line class-methods-use-this
+  constructor(private usersRepository: IUsersRepository) {}
+
   public async execute({
     email,
     password,
-  }: RequestBody): Promise<AuthenticationResponse> {
-    const usersRepository = getRepository(User);
-
-    const user = await usersRepository.findOne({ where: { email } });
+  }: IRequestBody): Promise<IAuthenticationResponse> {
+    const user = await this.usersRepository.findByEmail(email);
 
     if (!user) {
       throw new AppError('Invalid email or password.', 401);

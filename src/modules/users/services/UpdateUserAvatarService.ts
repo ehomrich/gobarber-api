@@ -1,10 +1,11 @@
 import { promises as fs } from 'fs';
 import path from 'path';
-import { getRepository } from 'typeorm';
 
-import uploadConfig from '../config/upload';
-import AppError from '../errors/AppError';
-import User from '../models/User';
+import uploadConfig from '@config/upload';
+import AppError from '@shared/errors/AppError';
+
+import User from '@modules/users/infra/typeorm/entities/User';
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 
 interface RequestBody {
   user_id: string;
@@ -12,16 +13,13 @@ interface RequestBody {
 }
 
 export default class UpdateUserAvatarService {
-  // eslint-disable-next-line class-methods-use-this
+  constructor(private usersRepository: IUsersRepository) {}
+
   public async execute({
     user_id,
     avatarFilename,
   }: RequestBody): Promise<User> {
-    const usersRepository = getRepository(User);
-
-    const user = await usersRepository.findOne({
-      where: { id: user_id },
-    });
+    const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
       throw new AppError(
@@ -41,7 +39,7 @@ export default class UpdateUserAvatarService {
 
     user.avatar = avatarFilename;
 
-    await usersRepository.save(user);
+    await this.usersRepository.save(user);
 
     return user;
   }
