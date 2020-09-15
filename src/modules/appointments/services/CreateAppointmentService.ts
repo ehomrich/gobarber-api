@@ -1,4 +1,5 @@
 import { startOfHour } from 'date-fns';
+import { injectable, inject } from 'tsyringe';
 
 import AppError from '@shared/errors/AppError';
 
@@ -10,8 +11,12 @@ interface IRequestBody {
   date: Date;
 }
 
-export default class CreateAppointmentService {
-  constructor(private appointmentsRepository: IAppointmentsRepository) {}
+@injectable()
+class CreateAppointmentService {
+  constructor(
+    @inject('AppointmentsRepository')
+    private appointmentsRepository: IAppointmentsRepository,
+  ) {}
 
   public async execute({
     provider_id,
@@ -34,3 +39,5 @@ export default class CreateAppointmentService {
     return appointment;
   }
 }
+
+export default CreateAppointmentService;

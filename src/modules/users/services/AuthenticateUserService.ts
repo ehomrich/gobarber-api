@@ -1,3 +1,4 @@
+import { injectable, inject } from 'tsyringe';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 
@@ -17,8 +18,12 @@ interface IAuthenticationResponse {
   token: string;
 }
 
-export default class AuthenticateUserService {
-  constructor(private usersRepository: IUsersRepository) {}
+@injectable()
+class AuthenticateUserService {
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
+  ) {}
 
   public async execute({
     email,
@@ -45,3 +50,5 @@ export default class AuthenticateUserService {
     return { user, token };
   }
 }
+
+export default AuthenticateUserService;

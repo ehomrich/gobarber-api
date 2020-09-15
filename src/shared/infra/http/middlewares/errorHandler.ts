@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 
 import AppError from '@shared/errors/AppError';
 
-interface ErrorResponse {
+interface IErrorResponse {
   status: string;
   message: string;
 }
@@ -12,7 +12,7 @@ export default function errorHandler(
   request: Request,
   response: Response,
   _: NextFunction,
-): Response<ErrorResponse> {
+): Response<IErrorResponse> {
   if (error instanceof AppError) {
     return response.status(error.statusCode).json({
       status: 'error',

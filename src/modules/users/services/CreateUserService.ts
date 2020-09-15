@@ -1,3 +1,4 @@
+import { injectable, inject } from 'tsyringe';
 import { hash } from 'bcryptjs';
 
 import AppError from '@shared/errors/AppError';
@@ -19,8 +20,12 @@ interface ICreatedUser {
   updated_at: Date;
 }
 
-export default class CreateUserService {
-  constructor(private usersRepository: IUsersRepository) {}
+@injectable()
+class CreateUserService {
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
+  ) {}
 
   // eslint-disable-next-line class-methods-use-this
   private omitPassword(user: User): ICreatedUser {
@@ -50,3 +55,5 @@ export default class CreateUserService {
     return this.omitPassword(user);
   }
 }
+
+export default CreateUserService;

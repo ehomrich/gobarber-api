@@ -1,5 +1,6 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import { injectable, inject } from 'tsyringe';
 
 import uploadConfig from '@config/upload';
 import AppError from '@shared/errors/AppError';
@@ -7,18 +8,22 @@ import AppError from '@shared/errors/AppError';
 import User from '@modules/users/infra/typeorm/entities/User';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 
-interface RequestBody {
+interface IRequestBody {
   user_id: string;
   avatarFilename: string;
 }
 
-export default class UpdateUserAvatarService {
-  constructor(private usersRepository: IUsersRepository) {}
+@injectable()
+class UpdateUserAvatarService {
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
+  ) {}
 
   public async execute({
     user_id,
     avatarFilename,
-  }: RequestBody): Promise<User> {
+  }: IRequestBody): Promise<User> {
     const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
@@ -44,3 +49,5 @@ export default class UpdateUserAvatarService {
     return user;
   }
 }
+
+export default UpdateUserAvatarService;
