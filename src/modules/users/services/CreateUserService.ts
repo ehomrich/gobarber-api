@@ -1,7 +1,8 @@
 import { injectable, inject } from 'tsyringe';
-import { hash } from 'bcryptjs';
 
 import AppError from '@shared/errors/AppError';
+
+import IHashProvider from '@modules/users/providers/models/IHashProvider';
 
 import User from '@modules/users/infra/typeorm/entities/User';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
@@ -25,6 +26,8 @@ class CreateUserService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+    @inject('HashProvider')
+    private hashProvider: IHashProvider,
   ) {}
 
   // eslint-disable-next-line class-methods-use-this
@@ -45,7 +48,7 @@ class CreateUserService {
       throw new AppError('Email address already in use.');
     }
 
-    const hashedPassword = await hash(password, 8);
+    const hashedPassword = await this.hashProvider.generateHash(password);
     const user = await this.usersRepository.create({
       name,
       email,
