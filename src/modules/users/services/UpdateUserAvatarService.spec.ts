@@ -5,15 +5,21 @@ import FakeUsersRepository from '../repositories/fakes/FakeUsersRepository';
 
 import UpdateUserAvatarService from './UpdateUserAvatarService';
 
+let fakeUsersRepository: FakeUsersRepository;
+let fakeStorageProvider: FakeStorageProvider;
+let updateUserAvatarService: UpdateUserAvatarService;
+
 describe('UpdateUserAvatar', () => {
-  it("should be able to update a user's avatar", async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeStorageProvider = new FakeStorageProvider();
-    const updateUserAvatarService = new UpdateUserAvatarService(
+  beforeEach(() => {
+    fakeUsersRepository = new FakeUsersRepository();
+    fakeStorageProvider = new FakeStorageProvider();
+    updateUserAvatarService = new UpdateUserAvatarService(
       fakeUsersRepository,
       fakeStorageProvider,
     );
+  });
 
+  it("should be able to update a user's avatar", async () => {
     const user = await fakeUsersRepository.create({
       name: 'John Doe',
       email: 'johndoe@example.com',
@@ -29,13 +35,6 @@ describe('UpdateUserAvatar', () => {
   });
 
   it("should not be able to update a non-existing user's avatar", async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeStorageProvider = new FakeStorageProvider();
-    const updateUserAvatarService = new UpdateUserAvatarService(
-      fakeUsersRepository,
-      fakeStorageProvider,
-    );
-
     await expect(
       updateUserAvatarService.execute({
         user_id: 'nonexistent',
@@ -45,13 +44,6 @@ describe('UpdateUserAvatar', () => {
   });
 
   it("should be able to delete a user's old avatar when updating with a new one", async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeStorageProvider = new FakeStorageProvider();
-    const updateUserAvatarService = new UpdateUserAvatarService(
-      fakeUsersRepository,
-      fakeStorageProvider,
-    );
-
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
 
     const user = await fakeUsersRepository.create({
