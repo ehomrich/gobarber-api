@@ -1,10 +1,10 @@
 import 'reflect-metadata';
-
 import '@shared/infra/typeorm';
-import '@shared/container';
 
 import express from 'express';
 import 'express-async-errors';
+
+import '@shared/container';
 
 import uploadConfig from '@config/upload';
 import errorHandler from '@shared/infra/http/middlewares/errorHandler';

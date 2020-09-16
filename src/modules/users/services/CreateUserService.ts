@@ -4,21 +4,13 @@ import AppError from '@shared/errors/AppError';
 
 import IHashProvider from '@modules/users/providers/models/IHashProvider';
 
-// import User from '@modules/users/infra/typeorm/entities/User';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import User from '@modules/users/infra/typeorm/entities/User';
 
 interface IRequestBody {
   name: string;
   email: string;
   password: string;
-}
-
-interface ICreatedUser {
-  id: string;
-  name: string;
-  email: string;
-  created_at: Date;
-  updated_at: Date;
 }
 
 @injectable()
@@ -30,11 +22,7 @@ class CreateUserService {
     private hashProvider: IHashProvider,
   ) {}
 
-  public async execute({
-    name,
-    email,
-    password,
-  }: IRequestBody): Promise<ICreatedUser> {
+  public async execute({ name, email, password }: IRequestBody): Promise<User> {
     const userExists = await this.usersRepository.findByEmail(email);
 
     if (userExists) {
@@ -48,9 +36,7 @@ class CreateUserService {
       password: hashedPassword,
     });
 
-    const { password: _, ...createdUser } = user;
-
-    return createdUser;
+    return user;
   }
 }
 
