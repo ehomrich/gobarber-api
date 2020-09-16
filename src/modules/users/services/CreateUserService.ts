@@ -4,7 +4,7 @@ import AppError from '@shared/errors/AppError';
 
 import IHashProvider from '@modules/users/providers/models/IHashProvider';
 
-import User from '@modules/users/infra/typeorm/entities/User';
+// import User from '@modules/users/infra/typeorm/entities/User';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 
 interface IRequestBody {
@@ -30,13 +30,6 @@ class CreateUserService {
     private hashProvider: IHashProvider,
   ) {}
 
-  // eslint-disable-next-line class-methods-use-this
-  private omitPassword(user: User): ICreatedUser {
-    const { id, name, email, created_at, updated_at } = user;
-
-    return { id, name, email, created_at, updated_at };
-  }
-
   public async execute({
     name,
     email,
@@ -55,7 +48,9 @@ class CreateUserService {
       password: hashedPassword,
     });
 
-    return this.omitPassword(user);
+    const { password: _, ...createdUser } = user;
+
+    return createdUser;
   }
 }
 

@@ -13,7 +13,7 @@ import routes from '@shared/infra/http/routes';
 const app = express();
 
 app.use(express.json());
-app.use('/static', express.static(uploadConfig.directory));
+app.use('/static', express.static(uploadConfig.uploadsFolder));
 app.use(routes);
 
 app.use(errorHandler);

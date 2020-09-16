@@ -29,7 +29,7 @@ describe('CreateAppointment', () => {
 
     await createAppointmentService.execute({ date, provider_id: '39mm98ri' });
 
-    expect(
+    await expect(
       createAppointmentService.execute({ date, provider_id: '298hfh18' }),
     ).rejects.toBeInstanceOf(AppError);
   });
