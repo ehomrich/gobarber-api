@@ -10,7 +10,7 @@ import UsersController from '@modules/users/infra/http/controllers/UsersControll
 import UserAvatarController from '@modules/users/infra/http/controllers/UserAvatarController';
 
 const router = Router();
-const uploadAdapter = multer(uploadConfig);
+const uploadAdapter = multer(uploadConfig.multer);
 const usersController = new UsersController();
 const userAvatarController = new UserAvatarController();
 
