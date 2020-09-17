@@ -12,7 +12,7 @@ describe('ListProviderMonthAvailability', () => {
     );
   });
 
-  it('should be able to list the availability of the provider during the month', async () => {
+  it('should be able to list the month availability of the provider', async () => {
     const timeSlots = Array.from({ length: 10 }, (_, index) => 8 + index);
 
     await Promise.all(
