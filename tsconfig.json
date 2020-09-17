@@ -8,6 +8,7 @@
     "strictPropertyInitialization": false,
     "moduleResolution": "node",
     "baseUrl": "./src",
+    "allowJs": true,
     "paths": {
       "@modules/*": ["modules/*"],
       "@config/*": ["config/*"],
