@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import '@shared/infra/typeorm';
+import 'dotenv/config';
 
 import express from 'express';
 import cors from 'cors';
