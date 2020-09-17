@@ -1,10 +1,10 @@
 import { injectable, inject } from 'tsyringe';
-import { getDaysInMonth, getDate } from 'date-fns';
+import { getDaysInMonth, getDate, isAfter } from 'date-fns';
 
 import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 
 interface IRequest {
-  user_id: string;
+  provider_id: string;
   month: number;
   year: number;
 }
@@ -22,15 +22,20 @@ class ListProviderMonthAvailabilityService {
   ) {}
 
   // eslint-disable-next-line class-methods-use-this
-  public async execute({ user_id, month, year }: IRequest): Promise<IResponse> {
+  public async execute({
+    provider_id,
+    month,
+    year,
+  }: IRequest): Promise<IResponse> {
     const appointments = await this.appointmentsRepository.findAllInMonthForProvider(
       {
-        provider_id: user_id,
+        provider_id,
         month,
         year,
       },
     );
 
+    const currentDate = new Date(Date.now());
     const daysOfTheMonth = Array.from(
       { length: getDaysInMonth(new Date(year, month - 1)) },
       (_, index) => index + 1,
@@ -41,10 +46,11 @@ class ListProviderMonthAvailabilityService {
         ({ date }) => getDate(date) === day,
       );
 
-      return {
-        day,
-        available: appointmentsOfTheDay.length < 10,
-      };
+      const compareDate = new Date(year, month - 1, day);
+      const available =
+        appointmentsOfTheDay.length < 10 && isAfter(compareDate, currentDate);
+
+      return { day, available };
     });
 
     return availability;

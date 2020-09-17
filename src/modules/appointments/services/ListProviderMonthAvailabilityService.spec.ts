@@ -19,6 +19,7 @@ describe('ListProviderMonthAvailability', () => {
       timeSlots.map(hour =>
         fakeAppointmentsRepository.create({
           provider_id: 'johndoe',
+          user_id: 'fake-user-id',
           date: new Date(2020, 8, 10, hour, 0, 0),
         }),
       ),
@@ -26,12 +27,17 @@ describe('ListProviderMonthAvailability', () => {
 
     await fakeAppointmentsRepository.create({
       provider_id: 'johndoe',
+      user_id: 'fake-user-id',
       date: new Date(2020, 8, 11, 9, 0, 0),
+    });
+
+    jest.spyOn(Date, 'now').mockImplementationOnce(() => {
+      return new Date(2020, 8, 3).getTime();
     });
 
     const monthAvailability = await listProviderMonthAvailabilityService.execute(
       {
-        user_id: 'johndoe',
+        provider_id: 'johndoe',
         month: 9,
         year: 2020,
       },

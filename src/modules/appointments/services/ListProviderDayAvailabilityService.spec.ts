@@ -15,11 +15,13 @@ describe('ListProviderDayAvailability', () => {
   it('should be able to list the day availability of the provider', async () => {
     await fakeAppointmentsRepository.create({
       provider_id: 'johndoe',
+      user_id: 'fake-user-id',
       date: new Date(2020, 8, 11, 14, 0, 0),
     });
 
     await fakeAppointmentsRepository.create({
       provider_id: 'johndoe',
+      user_id: 'fake-user-id',
       date: new Date(2020, 8, 11, 16, 0, 0),
     });
 
@@ -28,7 +30,7 @@ describe('ListProviderDayAvailability', () => {
     });
 
     const dayAvailability = await listProviderDayAvailabilityService.execute({
-      user_id: 'johndoe',
+      provider_id: 'johndoe',
       day: 11,
       month: 9,
       year: 2020,
@@ -37,6 +39,7 @@ describe('ListProviderDayAvailability', () => {
     expect(dayAvailability).toBeInstanceOf(Array);
     expect(dayAvailability).toEqual(
       expect.arrayContaining([
+        { hour: 11, available: false },
         { hour: 13, available: true },
         { hour: 14, available: false },
         { hour: 15, available: true },
