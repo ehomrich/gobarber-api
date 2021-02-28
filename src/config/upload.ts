@@ -1,6 +1,6 @@
 import path from 'path';
 import crypto from 'crypto';
-import multer from 'multer';
+import multer, { StorageEngine } from 'multer';
 
 interface IUploadConfig {
   driver: 's3' | 'disk';
@@ -47,7 +47,7 @@ export default {
   config: {
     disk: {},
     aws: {
-      bucket: 'app-gobarber-2',
+      bucket: 'app-gobarber-avatars',
     },
   },
 } as IUploadConfig;
